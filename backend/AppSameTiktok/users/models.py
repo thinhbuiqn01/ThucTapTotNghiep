@@ -55,7 +55,7 @@ class Users(AbstractBaseUser):
     
     
     
-    created_at      = models.DateTimeField(auto_now=True)
+    created_at      = models.DateTimeField(auto_now_add=True)
     updated_at      = models.DateTimeField(auto_now=True)
     date_joined     = models.DateTimeField(auto_now_add = True)
     last_login      = models.DateTimeField(auto_now_add = True)

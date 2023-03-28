@@ -22,25 +22,38 @@ class UserViewset(viewsets.ModelViewSet):
     # authentication_classes = [TokenAuthentication]
     # permission_classes = [permissions.IsAuthenticated]
     
-@api_view(['GET'])
-def login_user(request):
-    username = request.data['username']
-    password = request.data['password']
+    
+    
+def get_user(request, username, password):
+    username = username
+    password = password
+    
     auth_login = settings.LINK_API + "/users/auth/"
     query_string = {
         "username": username,
         "password": password,   
     }
-    message = {}
+    user = None
     try:
         auth_response =  requests.request("POST", auth_login,  json=query_string)
         token = auth_response.json()['token']
     except:
-        message['error'] = "Tên tài khoản của bạn hoặc Mật khẩu không đúng, vui lòng thử lại"
-        return Response(message, status=status.HTTP_400_BAD_REQUEST)
+        return user
     
     token_user = Token.objects.get(key = token)
     user = Users.objects.get(id = token_user.user_id)
+    return user
+    
+
+@api_view(['GET'])
+def login_user(request):
+    username = request.data['username']
+    password = request.data['password']
+    user = get_user(request=request,username=username, password=password)
+    message = {}
+    if user == None:
+        message['error'] = "Tài khoản hoặc mật khẩu không chính xát"
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
     date = datetime.now()
     user.last_login = date
     user.save()
@@ -73,6 +86,67 @@ def register_user(request):
         message['error'] = "Có lỗi xảy ra vui lòng thử lại!"
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
          
+
+@api_view(['PUT'])
+def update_name(request):
+    first_name = request.data['first_name']
+    last_name = request.data['last_name']
+    username = request.data['username']
+    password = request.data['password']
     
+    user = get_user(request=request,username=username, password=password)
+    if user == None:
+        message = {}
+        message['error'] = "Có lỗi xảy ra vui lòng thử lại"
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
+    user.first_name = first_name
+    user.last_name = last_name
+    user.save()
+    message['success'] = "Cập nhập tên thành công"
+    return Response(message, status=status.HTTP_202_ACCEPTED)
+
+@api_view(['PUT'])
+def update_phone(request):
+    phone_number = request.data['phone_number']
+    username = request.data['username']
+    password = request.data['password']
+    
+    user = get_user(request=request,username=username, password=password)
+    if user == None:
+        message = {}
+        message['error'] = "Có lỗi xảy ra vui lòng thử lại"
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
+    user.phone_number = phone_number
+    user.save()
+    message['success'] = "Cập nhập số điện thoại thành công"
+    return Response(message, status=status.HTTP_202_ACCEPTED)
+
+
+@api_view(['PUT'])
+def update_email(request):
+    email = request.data['email']
+    username = request.data['username']
+    password = request.data['password']
+    message = {}
+    
+    user = get_user(request=request,username=username, password=password)
+    if user == None:
+        message = {}
+        message['error'] = "Có lỗi xảy ra vui lòng thử lại"
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
+        
+    user.email = email
+    user.save()
+    message['success'] = "Cập email thành công"
+    return Response(message, status=status.HTTP_202_ACCEPTED)
+    
+
+    
+    
+    
+    
+    
+    
+         
     
     
