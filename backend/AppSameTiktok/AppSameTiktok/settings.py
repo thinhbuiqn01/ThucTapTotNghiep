@@ -42,6 +42,10 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'users',
+    'post',
+    'comment',
+    'media',
+    'like',
 ]
     
 
@@ -143,8 +147,10 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'AppSameTiktok/static'),
 ]
 
+# media file config
+
 MEDIA_URL = '/upload/'
-MEDIA_ROOT = BASE_DIR /'/upload/'
+MEDIA_ROOT = BASE_DIR /'upload'
 
 
 # Default primary key field type
