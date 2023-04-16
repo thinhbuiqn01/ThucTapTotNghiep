@@ -19,6 +19,7 @@ class MyAccountManager(BaseUserManager):
         
         user.set_password(password)
         user.role_user = 3
+        user.is_active = True
         user.save()
         return user
     
@@ -53,8 +54,6 @@ class Users(AbstractBaseUser):
     is_admin = models.BooleanField(default = False)
     remember_token  = models.CharField(max_length=255, blank=True, null=True)
     
-    
-    
     created_at      = models.DateTimeField(auto_now_add=True)
     updated_at      = models.DateTimeField(auto_now=True)
     date_joined     = models.DateTimeField(auto_now_add = True)
@@ -76,4 +75,29 @@ class Users(AbstractBaseUser):
     
     def has_module_perms(self, add_label):
         return True
+    
+class UserProfile(models.Model):
+    user = models.ForeignKey(Users, related_name="profile", on_delete=models.CASCADE)
+    profile_picture = models.ImageField(blank=True, upload_to='userprofile', default='userprofile/user.jpg')
+    sex = models.IntegerField(blank=True, default=None, null=True)
+    day_of_birth = models.DateField(blank=True, default=None, null= True)
+    country = models.CharField(max_length=50 ,blank =True, null=True)
+    city = models.CharField(max_length=50 ,blank =True, null=True)
+    district = models.CharField(max_length=50 ,blank =True, null=True)
+    state = models.CharField(max_length=50 ,blank =True, null=True)
+    address = models.CharField(blank=True, max_length = 100, null=True)
+
+    def __str__(self):
+        return self.user.username
+    
+    @property
+    def full_address(self):
+        return "{0}, {1}, {2}, {3}, {4}".format(self.address, self.state, self.district, self.city, self.country)
+    
+    
+    
+    
+        
+    
+    
     

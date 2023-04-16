@@ -5,4 +5,4 @@ import requests
 class MediaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Media
-        fields =['id','title','media']
+        fields ='__all__'
